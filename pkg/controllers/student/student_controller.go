@@ -2,18 +2,12 @@ package student
 
 import (
 	"encoding/json"
+	"github.com/poncorobbin/go-simple-rest/pkg/db"
+	. "github.com/poncorobbin/go-simple-rest/pkg/models"
 	"net/http"
 )
 
-type Student struct {
-	Id   string `json:"id"`
-	Name string `json:"name"`
-	Age  int    `json:"age"`
-}
-
-var data = []Student{
-	{Id: "1", Name: "ponco", Age: 24},
-}
+var studentRepo db.Repo = &Student{}
 
 func ActionStudent() {
 	http.HandleFunc("/students", func(w http.ResponseWriter, r *http.Request) {
@@ -32,10 +26,11 @@ func handleGet(w http.ResponseWriter, r *http.Request) {
 		res []byte
 		err error
 	)
+
 	if id := r.URL.Query().Get("id"); id != "" {
-		res, err = json.Marshal(selectStudent(id))
+		res, err = json.Marshal(studentRepo.FindOne(id))
 	} else {
-		res, err = json.Marshal(data)
+		res, err = json.Marshal(studentRepo.Find())
 	}
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -53,7 +48,7 @@ func handlePOST(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	data = append(data, student)
+	data := studentRepo.Save(student)
 
 	res, err := json.Marshal(data)
 	if err != nil {
@@ -68,7 +63,7 @@ func handlePUT(w http.ResponseWriter, r *http.Request) {
 	var student, payload Student
 
 	id := r.URL.Query().Get("id")
-	student = selectStudent(id)
+	student = studentRepo.FindOne(id).(Student)
 
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
@@ -78,20 +73,11 @@ func handlePUT(w http.ResponseWriter, r *http.Request) {
 	student.Name = payload.Name
 	student.Age = payload.Age
 
-	res, err := json.Marshal(student)
+	res, err := json.Marshal(studentRepo.Save(student))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	w.Write(res)
-}
-
-func selectStudent(id string) Student {
-	for _, each := range data {
-		if each.Id == id {
-			return each
-		}
-	}
-	return Student{}
 }

@@ -1,13 +1,23 @@
 package main
 
-import "net/http"
-import "github.com/poncorobbin/go-simple-rest/pkg/controllers"
+import (
+	"log"
+	"net/http"
+
+	"github.com/joho/godotenv"
+	"github.com/poncorobbin/go-simple-rest/pkg/controllers"
+)
 
 func main() {
-    controllers.New()
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
 
-    server := new(http.Server)
-    server.Addr = ":8090"
+	controllers.New()
 
-    server.ListenAndServe()
+	server := new(http.Server)
+	server.Addr = ":8090"
+
+	server.ListenAndServe()
 }

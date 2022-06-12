@@ -5,5 +5,5 @@ import (
 )
 
 func New() {
-    student.ActionStudent() 
+	student.ActionStudent()
 }
