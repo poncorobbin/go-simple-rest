@@ -14,10 +14,12 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	controllers.New()
+	mux := new(http.ServeMux)
+	controllers.New(mux)
 
 	server := new(http.Server)
 	server.Addr = ":8090"
+	server.Handler = mux
 
 	server.ListenAndServe()
 }

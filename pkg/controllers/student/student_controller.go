@@ -9,8 +9,8 @@ import (
 
 var studentRepo db.Repo[Student] = &Student{}
 
-func ActionStudent() {
-	http.HandleFunc("/students", func(w http.ResponseWriter, r *http.Request) {
+func ActionStudent(mux *http.ServeMux) {
+	mux.HandleFunc("/students", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == "GET" {
 			handleGet(w, r)
 		} else if r.Method == "POST" {
