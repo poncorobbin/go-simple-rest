@@ -14,7 +14,7 @@ type Student struct {
 	Age  int    `json:"age"`
 }
 
-func (s *Student) Find() interface{} {
+func (s *Student) Find() []Student {
 	db, err := db.Connect()
 	if err != nil {
 		fmt.Println(err.Error())
@@ -46,11 +46,11 @@ func (s *Student) Find() interface{} {
 	return res
 }
 
-func (s *Student) FindOne(id string) interface{} {
+func (s *Student) FindOne(id string) Student {
 	db, err := db.Connect()
 	if err != nil {
 		fmt.Println(err.Error())
-		return nil
+		return Student{}
 	}
 	defer db.Close()
 
@@ -60,35 +60,35 @@ func (s *Student) FindOne(id string) interface{} {
 
 	if err != nil {
 		fmt.Println(err.Error())
-		return nil
+		return Student{}
 	}
 
 	return student
 }
 
-func (s *Student) Save(body interface{}) interface{} {
+func (s *Student) Save(body Student) Student {
 	db, err := db.Connect()
 	if err != nil {
 		fmt.Println(err.Error())
-		return nil
+		return Student{}
 	}
 	defer db.Close()
 
-	var student = body.(Student)
+	var student = body
 
 	if student.Id != "" {
 		_, err := db.Exec("update tb_student set name = ?,  age = ? where id = ?", student.Name, student.Age, student.Id)
 		if err != nil {
 			fmt.Println(err.Error())
-			return nil
+			return Student{}
 		}
 	} else {
-		id := strconv.Itoa(len(s.Find().([]Student)) + 1)
+		id := strconv.Itoa(len(s.Find()) + 1)
 
 		_, err := db.Exec("insert into tb_student values (?, ?, ?, ?)", id, student.Name, student.Age, student.Age)
 		if err != nil {
 			fmt.Println(err.Error())
-			return nil
+			return Student{}
 		}
 	}
 

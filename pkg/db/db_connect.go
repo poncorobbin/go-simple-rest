@@ -7,10 +7,10 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type Repo interface {
-	Find() interface{}
-	FindOne(id string) interface{}
-	Save(interface{}) interface{}
+type Repo[T comparable] interface {
+	Find() []T
+	FindOne(string) T
+	Save(T) T
 }
 
 func Connect() (*sql.DB, error) {

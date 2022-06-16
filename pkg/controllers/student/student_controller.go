@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-var studentRepo db.Repo = &Student{}
+var studentRepo db.Repo[Student] = &Student{}
 
 func ActionStudent() {
 	http.HandleFunc("/students", func(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +63,7 @@ func handlePUT(w http.ResponseWriter, r *http.Request) {
 	var student, payload Student
 
 	id := r.URL.Query().Get("id")
-	student = studentRepo.FindOne(id).(Student)
+	student = studentRepo.FindOne(id)
 
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
