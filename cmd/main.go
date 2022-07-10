@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -21,5 +22,6 @@ func main() {
 	server.Addr = ":8090"
 	server.Handler = mux
 
+    fmt.Println("start and running")
 	server.ListenAndServe()
 }
